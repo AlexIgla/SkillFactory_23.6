@@ -13,19 +13,12 @@ keys = {
 }
 
 
-@bot.message_handler(content_types=['voice', ])
-def repeat(message: telebot.types.Message):
-    bot.send_message(message.chat.id, 'У тебя очень крсивый голос!')
-
-
 @bot.message_handler(commands=['start', 'help'])
-def repeat(message: telebot.types.Message):
-    bot.reply_to(message, f'Приветствую, {message.chat.username}')
-
-
-@bot.message_handler(content_types=['photo', ])
-def say_lmao(message: telebot.types.Message):
-    bot.reply_to(message, 'Nice meme XDD')
+def help(message: telebot.types.Message):
+    text = ('Чтобы начать работу, введите команду бота в следующем формате:\n<имя валюты> \
+<в какую валюту перевести> \
+<количество переводимой валюты>'
+    bot.reply_to(message, text)
 
 
 bot.polling(none_stop=True)
