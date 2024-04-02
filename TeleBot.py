@@ -53,9 +53,9 @@ def convert(message: telebot.types.Message):
         raise ConvertionException (f'Не удалось обработать валюту {quote}')
 
     try:
-        base_ticker = key[base]
+        base_ticker = keys[base]
     except KeyError:
-    raise ConvertionException(f'Не удалось обработать валюту {base}')
+        raise ConvertionException(f'Не удалось обработать валюту {base}')
 
     try:
         amount = float(amount)
