@@ -1,9 +1,10 @@
-﻿import json
-
+﻿import telebot
 import requests
-import telebot
+import json
+
 
 TOKEN = "7169964806:AAFjazC-ArySYWk5PYyn3YQ8RtZ2HFmsdzc"
+
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -12,6 +13,10 @@ keys = {
     'эфириум': 'ETH',
     'доллар': 'USD',
 }
+
+
+class ConvertionException(Exception):
+    pass
 
 
 @bot.message_handler(commands=['start', 'help'])
@@ -24,7 +29,7 @@ def help(message: telebot.types.Message):
 
 @bot.message_handler(commands=['values'])
 def help(message: telebot.types.Message):
-    text = ('Доступные валюты:')
+    text = 'Доступные валюты:'
     for key in keys.keys():
         text = '\n'.join((text, key,))
     bot.reply_to(message, text)
@@ -32,8 +37,32 @@ def help(message: telebot.types.Message):
 
 @bot.message_handler(content_types=['text', ])
 def convert(message: telebot.types.Message):
-    quote, base, amount = message.text.split(' ')
-    r = requests.get(f'https://min-api.cryptocompare.com/data/price?fsym={keys[quote]}&tsyms={keys[base]}')
+    values = message.text.split(' ')
+
+    if len(values) > 3:
+        raise ConvertionException('Слишком много параметров.')
+
+    quote, base, amount = values
+
+    if quote == base:
+        raise ConvertionException(f'Невозможно перевести одинковые валюты {base}')
+
+    try:
+        quote_ticker, base_ticker = keys[quote], keys[base]
+    except KeyError:
+        raise ConvertionException (f'Не удалось обработать валюту {quote}')
+
+    try:
+        base_ticker = key[base]
+    except KeyError:
+    raise ConvertionException(f'Не удалось обработать валюту {base}')
+
+    try:
+        amount = float(amount)
+    except ValueError:
+        raise ConvertionException(f'Не удалось обработать количество {amount}')
+
+    r = requests.get(f'https://min-api.cryptocompare.com/data/price?fsym={quote_ticker}&tsyms={base_ticker}')
     total_base = json.loads(r.content)[keys[base]]
     text = f'Цена {amount} {quote} в {base} - {total_base}'
     bot.send_message(message.chat.id, text)
