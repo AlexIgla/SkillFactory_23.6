@@ -1,6 +1,6 @@
 ﻿import telebot
 from config import keys, TOKEN
-from extensions import ConvertionException, CryptoConverter
+from extensions import ConvertionException, get_price
 
 
 bot = telebot.TeleBot(TOKEN)
@@ -31,7 +31,7 @@ def convert(message: telebot.types.Message):
             raise ConvertionException('Слишком много параметров.')
 
         quote, base, amount = values
-        total_base = CryptoConverter.convert(quote, base, amount)
+        total_base = get_price.convert(quote, base, amount)
     except ConvertionException as e:
         bot.reply_to(message, f'Ошибка пользователя.\n{e}')
     except Exception as e:

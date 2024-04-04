@@ -7,7 +7,7 @@ class ConvertionException(Exception):
     pass
 
 
-class CryptoConverter:
+class get_price:
     @staticmethod
     def convert(quote: str, base: str, amount: str):
         if quote == base:
